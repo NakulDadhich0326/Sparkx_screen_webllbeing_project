@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>SPARKX — Student Digital Wellbeing & Screen Time Coach | GEC Ajmer</title>
+  <link rel="manifest" href="./manifest.json?v=6.0">
+  <meta name="theme-color" content="#1e40af">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="stylesheet" href="./css/style.css?v=11.0">
+  <link rel="stylesheet" href="./css/interventions.css?v=11.0">
+</head>
+<body>
+
+  <!-- Desktop Controls Bar (1st Year Hackathon Project Pill) -->
+  <div class="desktop-controls-bar">
+    <span class="hackathon-pill">🏆 SPhINX'26 Hackathon</span>
+    <span class="college-pill">Govt. Engineering College Ajmer</span>
+    <span class="team-pill">⚡ Team SPARKX (1st Year CSE)</span>
+    <button id="toggleFrameBtn" class="btn-icon-tactile">🖥️ Expanded View</button>
+  </div>
+
+  <!-- Fallback Mode 10-Second Alert Banner (PDF Page 2 Fallback Guard) -->
+  <div id="cameraFallbackAlert" class="fallback-alert-banner">
+    <div class="fallback-alert-icon">⚠️</div>
+    <div class="fallback-alert-content">
+      <strong>Tab Distraction Detected!</strong>
+      <span>Fallback guard active. Return to study window within 10s grace period.</span>
+    </div>
+    <div class="fallback-countdown-pill"><span id="fallbackCountdown">10</span>s</div>
+  </div>
+
+  <!-- LEVEL 1: Gentle Toast Notification -->
+  <div id="interventionToast" class="intervention-toast">
+    <div class="toast-icon">🧘</div>
+    <div class="toast-text" id="toastMessageText">
+      <strong>Gentle Nudge:</strong> Re-anchoring your intent on your study goal.
+    </div>
+  </div>
+
+  <!-- LEVEL 2: Dim + Breathe Mindfulness Pause (10 Seconds) -->
+  <div id="dimBreatheOverlay" class="dim-breathe-overlay">
+    <div class="breathe-container">
+      <div class="breathe-circle-wrapper">
+        <div class="breathe-circle-outer"></div>
+        <div class="breathe-circle-inner" id="breatheTimerCount">10</div>
+      </div>
+      <h2 class="breathe-title">Dim + Breathe</h2>
+      <p class="breathe-instruction" id="breatheInstruction">Take a slow, deep breath in...</p>
+      <div class="breathe-pill">Level 2 Distraction Pause • 10s Mindful Reset</div>
+    </div>
+  </div>
+
+  <!-- LEVEL 3: Wait + Reason Delay (30 Seconds + Typed Reflection) -->
+  <div id="waitReasonOverlay" class="wait-reason-overlay">
+    <div class="wait-reason-modal">
+      <div class="wait-header-icon">🛡️</div>
+      <h2 class="wait-title">Wait + Typed Reason</h2>
+      <p class="wait-subtitle">Level 3 Safeguard: Give your brain 30 seconds before acting on an impulse.</p>
+
+      <div class="wait-timer-badge">
+        ⏱️ Pause Lock: <span id="waitTimerCount">30</span>s Remaining
+      </div>
+
+      <input
+        type="text"
+        id="breakReasonInput"
+        class="wait-reason-input"
+        placeholder="Why do you want to break focus? (e.g. urgent phone call)"
+      />
+
+      <div class="wait-actions">
+        <button id="resumeFocusBtn" class="btn-resume-locked" disabled>
+          Waiting 30s Countdown...
+        </button>
+        <button id="confirmBreakBtn" class="btn-break-honest">
+          End Session (Logged With Care)
+        </button>
+      </div>
+
+      <p class="gentle-disclaimer">
+        🕊️ <strong>Logged, Never Shamed:</strong> Positive reinforcement only. No score penalties.
+      </p>
+    </div>
+  </div>
+
+  <!-- Global Modal Dialog -->
+  <div id="globalModalOverlay" class="global-modal-overlay">
+    <div class="modal-dialog">
+      <div class="modal-header-row">
+        <h3 id="modalTitle">SPARKX Dialog</h3>
+        <button id="closeModalBtn" class="close-btn">&times;</button>
+      </div>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <!-- Smartphone Frame Wrapper -->
+  <div id="deviceWrapper" class="device-wrapper">
+
+    <!-- Notch / Native Mobile Status Bar -->
+    <div class="phone-notch-bar">
+      <span>09:41</span>
+      <div class="notch-speaker"></div>
+      <span>5G 🔋 100%</span>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- SCREEN 1: BRAND NEW SIGN UP & SIGN IN SCREEN (STARTS HERE) -->
+    <!-- ======================================================== -->
+    <div id="viewAuth" class="view-screen active">
+      <div class="auth-scrollable-container">
+
+        <!-- College Header Card -->
+        <div class="auth-header-card">
+          <div class="auth-college-title">🏛️ GOVT. ENGINEERING COLLEGE AJMER</div>
+          <div class="auth-hackathon-sub">Problem 1.2: Digital Wellbeing & Screen Time Coach for Students</div>
+          <div class="auth-badge-row">
+            <span class="auth-tag-pill">🏆 SPhINX'26 Hackathon</span>
+            <span class="auth-tag-pill green">⚡ Team SPARKX</span>
+            <span class="auth-tag-pill amber">🎓 1st Year B.Tech CSE</span>
+          </div>
+        </div>
+
+        <!-- Auth Card with Tabs -->
+        <div class="auth-box-card">
+          <div class="auth-nav-tabs">
+            <button id="tabSignupBtn" class="auth-nav-btn active">📝 Sign Up (New Student)</button>
+            <button id="tabLoginBtn" class="auth-nav-btn">🔑 Sign In</button>
+          </div>
+
+          <!-- SIGN UP FORM -->
+          <div id="signupFormContainer">
+            <div class="day1-reward-banner">
+              <span class="day1-gift-icon">🎁</span>
+              <div class="day1-reward-info">
+                <h4>Day 1 Reward: 100 Focus Coins!</h4>
+                <p>On new account creation, all initial stats start at 0 (streak, minutes, consistency). Claim your 100 bonus coins!</p>
+              </div>
+            </div>
+
+            <form id="studentSignupForm" class="form-stack">
+              <label class="form-label">Student Full Name</label>
+              <input type="text" id="signupName" class="input-field" placeholder="👤 e.g. Rahul Sharma" required />
+
+              <label class="form-label">Mobile Number</label>
+              <input type="tel" id="signupPhone" class="input-field" placeholder="📱 e.g. 9876543210" required />
+
+              <label class="form-label">College & Branch</label>
+              <input type="text" id="signupCollege" class="input-field" placeholder="🏫 e.g. GEC Ajmer (1st Year CS)" value="GEC Ajmer (1st Year CS)" required />
+
+              <label class="form-label">Create Password</label>
+              <input type="password" id="signupPassword" class="input-field" placeholder="🔒 Password (e.g. pass123)" required />
+
+              <button type="submit" class="btn-auth-action full-width" style="margin-top: 8px;">
+                🚀 CREATE ACCOUNT & CLAIM 100 COINS
+              </button>
+
+              <button type="button" id="quickDemoStudentBtn" class="btn-demo-fill full-width">
+                ⚡ Quick Demo Student Fill (1-Click Test)
+              </button>
+            </form>
+          </div>
+
+          <!-- SIGN IN FORM -->
+          <div id="loginFormContainer" style="display: none;">
+            <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; border-radius: 12px; padding: 12px; margin-bottom: 14px; font-size: 0.8rem; color: #86efac; line-height: 1.4;">
+              🔑 Sign in with your registered student mobile number and password to access your SQLite database profile.
+            </div>
+
+            <form id="studentLoginForm" class="form-stack">
+              <label class="form-label">Registered Mobile Number</label>
+              <input type="tel" id="loginPhone" class="input-field" placeholder="📱 Registered Mobile Number" required />
+
+              <label class="form-label">Password</label>
+              <input type="password" id="loginPassword" class="input-field" placeholder="🔒 Password" required />
+
+              <button type="submit" class="btn-auth-action green full-width" style="margin-top: 8px;">
+                📚 SIGN IN TO MY STUDY DASHBOARD
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <div class="db-status-footer">
+          💾 Persistent Database: <strong>SQLite3 (backend/sparkx_students.db)</strong><br>
+          <span style="font-size: 0.7rem; color: #64748b;">Zero Pre-Loaded Users • Starts Fresh with Sign Up & Sign In</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- SCREEN 2: MAIN DASHBOARD VIEW (ACTIVE AFTER SIGN IN/UP)  -->
+    <!-- ======================================================== -->
+    <div id="viewMain" class="view-screen">
+
+      <!-- Header with Profile, Notification Bell, Info & Sign Out -->
+      <header class="main-app-header">
+        <div class="main-brand-row">
+          <div class="brand-icon-circle">⚡</div>
+          <div class="brand-text-block">
+            <h1>SPARKX</h1>
+            <span>Focus Coach • 1st Year CSE</span>
+          </div>
+        </div>
+        <div class="header-action-group">
+          <!-- Profile Button -->
+          <button id="btnOpenProfile" class="btn-profile-pill" title="My Student Profile">
+            👤 <span class="profile-pill-name" id="headerProfileName">Profile</span>
+          </button>
+          <!-- Notification Bell with Red Badge -->
+          <button id="notificationsBtn" class="btn-notification-bell" title="Friend Requests & Alerts">
+            🔔 <span id="notificationBadge" class="red-alert-counter">1</span>
+          </button>
+          <!-- Info Button -->
+          <button id="teamInfoBtn" class="btn-icon-tactile" title="Team Details & Problem Statement">🏛️ Info</button>
+          <!-- Sign Out Button -->
+          <button id="btnSignOut" class="btn-signout-small" title="Sign Out & Return to Login">Sign Out</button>
+        </div>
+      </header>
+
+      <!-- Student Greeting & SQLite Status Bar -->
+      <div class="student-status-bar" id="studentStatusBar">
+        <span>👋 <strong id="bannerStudentName">Student</strong> (<span id="bannerStudentCollege">GEC Ajmer</span>)</span>
+        <span class="sqlite-live-pill">💾 SQLite Connected</span>
+      </div>
+
+      <!-- Main Scrollable Tabs Content -->
+      <main class="main-app-scrollable">
+
+        <!-- ================= TAB 1: FOCUS ENGINE ================= -->
+        <section id="tabFocus" class="tab-pane active">
+
+          <!-- Top Stats Strip -->
+          <div class="stats-summary-grid">
+            <div class="stat-card-box coins-focus">
+              <span class="stat-label">Focus Coins</span>
+              <span class="stat-value" id="metricCoins">100 🪙</span>
+            </div>
+            <div class="stat-card-box streak-focus">
+              <span class="stat-label">Daily Streak</span>
+              <span class="stat-value" id="metricStreak">0 Days 🔥</span>
+            </div>
+            <div class="stat-card-box score-focus">
+              <span class="stat-label">Consistency</span>
+              <span class="stat-value" id="metricConsistencyScore">0/100 ⚡</span>
+            </div>
+          </div>
+
+          <!-- Real-Time Camera Gaze Detection Card -->
+          <div class="camera-card-section">
+            <div class="camera-header-flex">
+              <span class="camera-heading">Vision AI: Gaze & Phone Catch 📷</span>
+              <div id="cameraStatusBadge" class="camera-status-pill">
+                <span class="dot-indicator green"></span> Vision AI Ready
+              </div>
+            </div>
+
+            <div class="video-frame-box">
+              <video id="cameraVideoPreview" autoplay playsinline muted></video>
+              <canvas id="cameraCanvas" style="display: none;"></canvas>
+
+              <!-- Idle / Blocked placeholder overlay -->
+              <div id="cameraPlaceholderOverlay" class="camera-placeholder-overlay">
+                <span class="placeholder-cam-icon">📷</span>
+                <span class="placeholder-cam-title">Physical Front Camera Monitor</span>
+                <span class="placeholder-cam-sub">Tap 'Enable Front Camera' to connect physical webcam</span>
+              </div>
+
+              <div class="camera-face-box">
+                <div class="reticle-corner top-left"></div>
+                <div class="reticle-corner top-right"></div>
+                <div class="reticle-corner bottom-left"></div>
+                <div class="reticle-corner bottom-right"></div>
+                <span class="reticle-status-text" id="reticleStatusText">Face Centered</span>
+              </div>
+            </div>
+
+            <!-- Camera Controls & Test Simulation Row -->
+            <div class="camera-controls-wrapper">
+              <button id="toggleCameraBtn" class="btn-cam-toggle">Enable Front Camera 📷</button>
+              <div class="camera-test-chips">
+                <button id="testLookDownBtn" class="btn-test-action amber" title="Simulate looking down at a mobile phone">
+                  📱 Test Phone Tilt
+                </button>
+                <button id="testLookAwayBtn" class="btn-test-action amber" title="Simulate looking away from study desk">
+                  👀 Test Look Away
+                </button>
+                <button id="testTabDistractionBtn" class="btn-test-action red" title="Simulate switching tab or opening link & start 10s countdown">
+                  ⏱️ Test 10s Tab Count
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ================= REVAMPED HIGH-TECH POMODORO TIMER ================= -->
+          <div class="pomodoro-card modern-timer-card">
+
+            <!-- Timer Header Bar -->
+            <div class="timer-top-meta">
+              <div id="timerStateBadge" class="timer-state-pill ready">
+                <span class="beacon-dot"></span> Ready to Focus
+              </div>
+              <button id="btnToggleAudio" class="btn-audio-toggle" title="Toggle Sound Feedback">
+                🔊 Sound On
+              </button>
+            </div>
+
+            <!-- Glowing SVG Dual-Ring Dial -->
+            <div class="timer-circle-wrap">
+              <svg class="timer-svg" viewBox="0 0 260 260">
+                <defs>
+                  <linearGradient id="timerGradientNeon" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#06b6d4" />
+                    <stop offset="50%" stop-color="#3b82f6" />
+                    <stop offset="100%" stop-color="#10b981" />
+                  </linearGradient>
+                  <filter id="neonGlow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="5" result="blur" />
+                    <feMerge>
+                      <feMergeNode in="blur" />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                  </filter>
+                </defs>
+                <!-- Background track -->
+                <circle class="ring-bg-modern" cx="130" cy="130" r="110"></circle>
+                <!-- Outer subtle glow track -->
+                <circle class="ring-glow-track" cx="130" cy="130" r="110"></circle>
+                <!-- Dynamic progress arc -->
+                <circle id="timerRingProgress" class="ring-progress-modern" cx="130" cy="130" r="110" filter="url(#neonGlow)"></circle>
+              </svg>
+
+              <!-- Central Digital Countdown -->
+              <div class="timer-center-info">
+                <div id="timerDisplay" class="timer-display-modern">35:00</div>
+                <div class="active-task-pill">
+                  <span class="active-task-icon">🎯</span>
+                  <span id="activeGoalLabel">Engineering Mathematics Unit 2</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Duration Selector Pills -->
+            <div class="timer-presets-row" id="timerPresetsRow">
+              <button type="button" class="preset-pill" data-minutes="25">25m 🍅</button>
+              <button type="button" class="preset-pill active" data-minutes="35">35m 🔥 Streak</button>
+              <button type="button" class="preset-pill" data-minutes="50">50m 🧠 Deep</button>
+              <button type="button" class="preset-pill demo" data-minutes="1">1m ⚡ Test</button>
+            </div>
+
+            <!-- Daily Streak Notice -->
+            <div class="streak-qualifier-ribbon">
+              🔥 <strong>30+ Min Rule:</strong> Complete 30+ minutes in this session to unlock your daily streak & +50 bonus coins!
+            </div>
+
+            <!-- Idle Setup Form (Before Session Starts) -->
+            <div id="idleSetupCard" class="form-stack" style="margin-top: 10px;">
+              <input
+                type="text"
+                id="focusGoalInput"
+                class="input-field"
+                placeholder="What are you studying? (e.g. Engineering Maths Unit 2)"
+                value="Engineering Mathematics Unit 2"
+              />
+              <button id="startFocusBtn" class="btn-start-focus-modern">
+                🚀 START LOCKED-IN FOCUS
+              </button>
+            </div>
+
+            <!-- Active Session Action Buttons -->
+            <div id="activeFocusCard" class="timer-running-actions hidden" style="margin-top: 10px;">
+              <button id="pauseFocusBtn" class="btn-timer-pause-modern">Pause ⏸</button>
+              <button id="cancelFocusBtn" class="btn-timer-cancel-modern">Take Mindful Break 🕊️</button>
+            </div>
+          </div>
+
+          <!-- Anti-Doomscroll Blocker Card -->
+          <div class="anti-doomscroll-card">
+            <div class="anti-doomscroll-head">
+              <span class="anti-doomscroll-title">🛡️ Anti-Doomscroll Blocker & Link Guard</span>
+              <span class="double-weight-badge">Reels & Shorts Weight ×2</span>
+            </div>
+            <p style="font-size: 0.76rem; color: #94a3b8; margin: 4px 0 8px 0; line-height: 1.3;">
+              Opening distracting tabs or links triggers immediate tab-switch detection & starts the <strong>10-second countdown</strong>. Tap to test:
+            </p>
+            <div class="block-chips-flex">
+              <button type="button" class="chip-tag double-weight chip-doom-link" data-url="https://www.instagram.com/reels" data-name="Instagram Reels">📸 Instagram Reels (2x) ↗</button>
+              <button type="button" class="chip-tag double-weight chip-doom-link" data-url="https://www.youtube.com/shorts" data-name="YouTube Shorts">▶️ YouTube Shorts (2x) ↗</button>
+              <button type="button" class="chip-tag double-weight chip-doom-link" data-url="https://www.tiktok.com" data-name="TikTok">🎵 TikTok (2x) ↗</button>
+              <button type="button" class="chip-tag chip-doom-link" data-url="https://www.reddit.com" data-name="Reddit">👽 Reddit ↗</button>
+              <button type="button" class="chip-tag chip-doom-link" data-url="https://x.com" data-name="Twitter / X">🐦 Twitter / X ↗</button>
+              <button type="button" class="chip-tag chip-doom-link" data-url="https://www.netflix.com" data-name="Netflix">🎬 Netflix ↗</button>
+            </div>
+
+            <!-- Custom URL Location Test Launcher -->
+            <div class="url-test-launcher">
+              <span class="url-test-label">🌐 Test Custom Link / Tab Location (10s Count):</span>
+              <div class="url-test-row">
+                <input
+                  type="text"
+                  id="testLinkLocationInput"
+                  class="input-field test-link-input"
+                  placeholder="Enter link location (e.g. instagram.com/reels)"
+                  value="https://www.instagram.com/reels"
+                />
+                <button type="button" id="btnLaunchLocationLink" class="btn-launch-link">
+                  Open & Start 10s ↗
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ================= TAB 2: DAILY TASK ORGANIZER ================= -->
+        <section id="tabTasks" class="tab-pane">
+          <div class="section-title-wrap">
+            <h2>📌 Daily Study Planner</h2>
+            <p>Organize your college study goals into focused Pomodoro sessions.</p>
+          </div>
+
+          <div class="task-creator-card">
+            <form id="addTaskForm">
+              <input
+                type="text"
+                id="taskTitleInput"
+                class="input-field"
+                placeholder="Add study task (e.g. Practice C pointers lab)..."
+                required
+              />
+              <div class="task-creator-row">
+                <select id="taskPrioritySelect" class="input-field" style="width: 140px;">
+                  <option value="HIGH">High Priority</option>
+                  <option value="MEDIUM" selected>Medium Priority</option>
+                  <option value="LOW">Low Priority</option>
+                </select>
+                <input
+                  type="number"
+                  id="taskDurationInput"
+                  class="input-field"
+                  style="width: 90px;"
+                  value="35"
+                  min="5"
+                  max="180"
+                  placeholder="Mins"
+                />
+                <button type="submit" class="btn-focus-now" style="padding: 10px 16px;">Add</button>
+              </div>
+            </form>
+          </div>
+
+          <div id="taskListContainer">
+            <!-- Dynamically populated tasks -->
+          </div>
+        </section>
+
+        <!-- ================= TAB 3: ACCOUNTABILITY STUDY GROUPS ================= -->
+        <section id="tabGroups" class="tab-pane">
+          <div class="section-title-wrap">
+            <h2>👥 Study Squad Circles</h2>
+            <p>Peer accountability circles. Invite classmates, motivate friends, and cheer them on live!</p>
+          </div>
+
+          <!-- SEND FRIEND REQUEST SECTION (User Request) -->
+          <div class="send-buddy-card">
+            <div class="send-buddy-head">
+              <div class="send-buddy-title-row">
+                <span class="buddy-icon">🤝</span>
+                <div>
+                  <h4>Add Study Buddy & Send Request</h4>
+                  <span>Invite classmates to your focus circles</span>
+                </div>
+              </div>
+            </div>
+
+            <form id="sendBuddyForm" class="form-stack" style="margin-top: 10px;">
+              <input
+                type="text"
+                id="buddyTargetInput"
+                class="input-field"
+                placeholder="Enter classmate's Phone (e.g. 9876543210) or Name..."
+                required
+              />
+
+              <!-- Quick Classmate Suggestion Chips -->
+              <div class="quick-classmate-chips">
+                <span class="chip-label">Quick Classmates:</span>
+                <button type="button" class="chip-suggest" data-name="Ankit Kumar Meena">Ankit (CSE)</button>
+                <button type="button" class="chip-suggest" data-name="Bhumika Rawat">Bhumika (Rep)</button>
+                <button type="button" class="chip-suggest" data-name="Gaurav Kumar">Gaurav (UI/UX)</button>
+                <button type="button" class="chip-suggest" data-name="Priya Verma">Priya (1st Year)</button>
+              </div>
+
+              <input
+                type="text"
+                id="buddyMessageInput"
+                class="input-field"
+                placeholder="Study invite message..."
+                value="Let's build daily focus streaks together on SPARKX!"
+              />
+
+              <button type="submit" class="btn-send-buddy full-width">
+                🚀 SEND FRIEND REQUEST
+              </button>
+            </form>
+
+            <!-- Sent Friend Requests List -->
+            <div class="sent-requests-wrapper">
+              <div class="sent-requests-head">
+                <span>📤 Sent Requests (<span id="sentRequestsCount">0</span>)</span>
+              </div>
+              <div id="sentRequestsList"></div>
+            </div>
+          </div>
+
+          <div id="groupPresenceContainer">
+            <!-- Dynamically populated group presence & cheers -->
+          </div>
+
+          <!-- Strict Privacy Preserving Leaderboard -->
+          <div style="margin-top: 20px;">
+            <div style="font-size: 0.85rem; font-weight: 800; text-transform: uppercase; color: #94a3b8; margin-bottom: 8px;">
+              🏆 Consistency Leaderboard
+            </div>
+            <div class="privacy-notice-strip">
+              <span>🛡️</span>
+              <div>
+                <strong>Privacy Guaranteed:</strong>
+                As per SPhINX'26 requirements, strictly Name and Rank/Score are visible. No personal contact numbers or logs are revealed.
+              </div>
+            </div>
+            <div id="leaderboardListContainer">
+              <!-- Dynamically populated privacy leaderboard -->
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= TAB 4: REWARDS & GAMIFICATION ================= -->
+        <section id="tabRewards" class="tab-pane">
+          <div class="section-title-wrap">
+            <h2>🪙 Student Focus Rewards</h2>
+            <p>Earn 100 coins on Day 1, plus coins on every completed study session!</p>
+          </div>
+
+          <div class="stats-summary-grid" style="margin-bottom: 16px;">
+            <div class="stat-card-box coins-focus">
+              <span class="stat-label">My Coins</span>
+              <span class="stat-value" id="rewardWalletCoins">100 🪙</span>
+            </div>
+            <div class="stat-card-box">
+              <span class="stat-label">Doomscroll Saved</span>
+              <span class="stat-value" id="metricHoursSaved">0.0h</span>
+            </div>
+            <div class="stat-card-box">
+              <span class="stat-label">Total Focused</span>
+              <span class="stat-value" id="metricTotalFocus">0.0h</span>
+            </div>
+          </div>
+
+          <div style="font-size: 0.85rem; font-weight: 800; text-transform: uppercase; color: #94a3b8; margin: 12px 0 8px;">
+            🎁 Redeemable Student Perks
+          </div>
+          <div id="rewardsStoreContainer">
+            <!-- Populated from gamificationEngine -->
+          </div>
+
+          <div style="font-size: 0.85rem; font-weight: 800; text-transform: uppercase; color: #94a3b8; margin: 16px 0 8px;">
+            🏅 Earned Badges
+          </div>
+          <div id="badgesContainer" class="badges-flow">
+            <!-- Populated badges -->
+          </div>
+        </section>
+
+        <!-- ================= TAB 5: WELLBEING ANALYTICS ================= -->
+        <section id="tabAnalytics" class="tab-pane">
+          <div class="section-title-wrap">
+            <h2>📊 Screen Time Insights</h2>
+            <p>Prevented doomscroll hours and weekly study focus breakdown.</p>
+          </div>
+
+          <div class="anti-doomscroll-card" style="margin-bottom: 14px;">
+            <h4 style="font-size: 0.95rem; margin-bottom: 6px;">🧠 Behavioral Coaching Summary</h4>
+            <p style="font-size: 0.8rem; color: #cbd5e1; line-height: 1.5; margin-bottom: 10px;">
+              By utilizing the 3-level intervention system, you avoid doomscrolling short-form video traps.
+            </p>
+            <div style="background: rgba(16, 185, 129, 0.15); border-left: 3px solid #10b981; padding: 8px 12px; border-radius: 6px; font-size: 0.78rem; color: #86efac;">
+              Level 2 "Dim + Breathe" resolves 78% of distraction urges without breaking study flow!
+            </div>
+          </div>
+
+          <div class="anti-doomscroll-card">
+            <h4 style="font-size: 0.95rem; margin-bottom: 10px;">📈 Consistency Bar Chart</h4>
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; height: 110px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+              <div style="text-align: center; flex: 1;">
+                <div style="height: 35px; background: #2563eb; border-radius: 4px 4px 0 0; margin: 0 4px;"></div>
+                <span style="font-size: 0.7rem; color: #94a3b8;">Mon</span>
+              </div>
+              <div style="text-align: center; flex: 1;">
+                <div style="height: 60px; background: #2563eb; border-radius: 4px 4px 0 0; margin: 0 4px;"></div>
+                <span style="font-size: 0.7rem; color: #94a3b8;">Tue</span>
+              </div>
+              <div style="text-align: center; flex: 1;">
+                <div style="height: 45px; background: #2563eb; border-radius: 4px 4px 0 0; margin: 0 4px;"></div>
+                <span style="font-size: 0.7rem; color: #94a3b8;">Wed</span>
+              </div>
+              <div style="text-align: center; flex: 1;">
+                <div style="height: 80px; background: #38bdf8; border-radius: 4px 4px 0 0; margin: 0 4px;"></div>
+                <span style="font-size: 0.7rem; color: #94a3b8;">Thu</span>
+              </div>
+              <div style="text-align: center; flex: 1;">
+                <div style="height: 70px; background: #38bdf8; border-radius: 4px 4px 0 0; margin: 0 4px;"></div>
+                <span style="font-size: 0.7rem; color: #94a3b8;">Fri</span>
+              </div>
+              <div style="text-align: center; flex: 1;">
+                <div style="height: 90px; background: #10b981; border-radius: 4px 4px 0 0; margin: 0 4px;"></div>
+                <span style="font-size: 0.7rem; color: #94a3b8;">Today</span>
+              </div>
+            </div>
+            <div style="font-size: 0.72rem; color: #94a3b8; margin-top: 8px; text-align: right;">
+              🟢 Status: Active Study Account
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+      <!-- Bottom Navigation Bar -->
+      <nav class="bottom-app-nav">
+        <button class="nav-bottom-item active" data-tab="tabFocus">
+          <span class="nav-icon-glyph">🎯</span>
+          <span class="nav-text-lbl">Focus</span>
+        </button>
+        <button class="nav-bottom-item" data-tab="tabTasks">
+          <span class="nav-icon-glyph">📋</span>
+          <span class="nav-text-lbl">Tasks</span>
+        </button>
+        <button class="nav-bottom-item" data-tab="tabGroups">
+          <span class="nav-icon-glyph">👥</span>
+          <span class="nav-text-lbl">Squad</span>
+        </button>
+        <button class="nav-bottom-item" data-tab="tabRewards">
+          <span class="nav-icon-glyph">🪙</span>
+          <span class="nav-text-lbl">Rewards</span>
+        </button>
+        <button class="nav-bottom-item" data-tab="tabAnalytics">
+          <span class="nav-icon-glyph">📊</span>
+          <span class="nav-text-lbl">Stats</span>
+        </button>
+      </nav>
+
+    </div>
+
+  </div>
+
+  <!-- Scripts with cache-busting v=11.0 -->
+  <script src="./js/sound-effects.js?v=11.0"></script>
+  <script src="./js/api-client.js?v=11.0"></script>
+  <script src="./js/gamification.js?v=11.0"></script>
+  <script src="./js/session-timer.js?v=11.0"></script>
+  <script src="./js/distraction-detector.js?v=11.0"></script>
+  <script src="./js/intervention-manager.js?v=11.0"></script>
+  <script src="./js/task-manager.js?v=11.0"></script>
+  <script src="./js/group-sync.js?v=11.0"></script>
+  <script src="./js/app.js?v=11.0"></script>
+</body>
+</html>

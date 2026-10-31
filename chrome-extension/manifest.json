@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "SPARKX Focus & Anti-Doomscroll Coach",
+  "version": "1.0.0",
+  "description": "Companion extension for SPARKX Digital Wellbeing & Screen Time Coach (SPhINX'26 Hackathon, GEC Ajmer).",
+  "permissions": [
+    "alarms",
+    "storage",
+    "tabs"
+  ],
+  "host_permissions": [
+    "http://localhost:8080/*",
+    "*://*.instagram.com/*",
+    "*://*.youtube.com/*",
+    "*://*.tiktok.com/*",
+    "*://*.reddit.com/*",
+    "*://*.x.com/*",
+    "*://*.twitter.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "SPARKX Focus Coach"
+  }
+}

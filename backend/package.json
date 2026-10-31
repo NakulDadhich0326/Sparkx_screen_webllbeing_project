@@ -1,0 +1,31 @@
+{
+  "name": "sparkx-screen-time-coach-backend",
+  "version": "1.0.0",
+  "description": "Backend API for SPARKX Digital Wellbeing & Screen Time Coach - SPhINX'26 Hackathon (GEC Ajmer)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": [
+    "digital-wellbeing",
+    "screen-time-coach",
+    "hackathon",
+    "sphinx26",
+    "sparkx",
+    "pomodoro",
+    "focus-timer",
+    "distraction-detection"
+  ],
+  "author": "Team SPARKX (Nakul Dadhich, Gaurav Kumar, Ankit Kumar Meena, Bhumika Rawat)",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.19.2",
+    "cors": "^2.8.5",
+    "jsonwebtoken": "^9.0.2",
+    "socket.io": "^4.7.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}

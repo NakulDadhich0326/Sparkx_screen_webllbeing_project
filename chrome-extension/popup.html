@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>SPARKX Coach</title>
+  <style>
+    body {
+      width: 280px;
+      margin: 0;
+      padding: 16px;
+      background: #0f172a;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 10px;
+    }
+    .logo {
+      width: 28px;
+      height: 28px;
+      background: #6366f1;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+    }
+    .title { font-size: 14px; font-weight: 700; }
+    .sub { font-size: 11px; color: #38bdf8; }
+    .status-card {
+      background: #1e293b;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    .status-val { font-size: 18px; font-weight: 700; color: #34d399; margin: 4px 0; }
+    .rule-note { font-size: 11px; color: #94a3b8; line-height: 1.4; }
+    .btn-open-app {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      text-align: center;
+      background: #4f46e5;
+      color: #fff;
+      text-decoration: none;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">⚡</div>
+    <div>
+      <div class="title">SPARKX Coach</div>
+      <div class="sub">SPhINX'26 • GEC Ajmer</div>
+    </div>
+  </div>
+
+  <div class="status-card">
+    <div style="font-size: 11px; color: #94a3b8;">Sync Status with Phone App:</div>
+    <div id="syncStatus" class="status-val">Active Guard 🛡️</div>
+    <div class="rule-note">Reels & Shorts count double (2x). Timer survives sleep.</div>
+  </div>
+
+  <a href="http://localhost:8080" target="_blank" class="btn-open-app">Open Mobile Dashboard 📱</a>
+
+  <script src="popup.js"></script>
+</body>
+</html>
